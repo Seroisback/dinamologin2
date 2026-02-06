@@ -8,6 +8,9 @@
   <meta name="description" content="Giriş, panel, para yatırma ve oyun kartları arayüzü." />
   <meta name="robots" content="index,follow" />
 
+  <!-- ✅ EK: Canonical -->
+  <link rel="canonical" href="https://dinamobetlogincom.netlify.app/">
+
   <!-- OPEN GRAPH -->
   <meta property="og:type" content="website">
   <meta property="og:locale" content="tr_TR">
@@ -100,6 +103,35 @@
     .dot{width:8px; height:8px; border-radius:99px; background:#31c24b}
     .chip b{font-size:13px}
     .chip span{font-size:12px; color:rgba(255,255,255,.8)}
+
+    /* ✅ EK: Topbar bakiye */
+    .balTop{
+      font-size:12px;
+      color:var(--green);
+      font-weight:800;
+      letter-spacing:.2px;
+      margin-top:2px;
+    }
+    .balBadge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(64,176,42,.35);
+      background:rgba(64,176,42,.10);
+      color:rgba(255,255,255,.92);
+      font-size:12px;
+      line-height:1;
+    }
+    .balBadge b{color:var(--green)}
+    .balMini{
+      font-size:12px;
+      color:var(--green);
+      font-weight:900;
+      letter-spacing:.2px;
+      margin-bottom:2px;
+    }
 
     /* NAV (logo altı menü) */
     .nav{
@@ -369,6 +401,22 @@
     .drawer .dIt:hover{background:rgba(255,255,255,.06)}
     .drawer small{color:var(--muted)}
 
+    /* ✅ EK: Drawer bakiye */
+    .drawerBal{
+      margin-top:8px;
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(64,176,42,.35);
+      background:rgba(64,176,42,.10);
+      color:rgba(255,255,255,.92);
+      font-size:12px;
+      font-weight:800;
+    }
+    .drawerBal b{color:var(--green)}
+
     /* Modal */
     .modalWrap{
       position:fixed; inset:0;
@@ -484,6 +532,33 @@
     .method.match:hover{
       border-color:rgba(242,180,0,.25);
     }
+
+    /* ✅ EK: DinamoTV görsel */
+    .tvBox{
+      display:grid;
+      gap:10px;
+      place-items:center;
+      text-align:center;
+    }
+    .tvBox img{
+      width:min(260px, 100%);
+      height:auto;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.20);
+    }
+    .xTop{
+      width:36px; height:36px;
+      border-radius:10px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.04);
+      cursor:pointer;
+      display:grid;
+      place-items:center;
+      color:rgba(255,255,255,.90);
+      font-weight:900;
+    }
+    .xTop:hover{background:rgba(255,255,255,.07)}
   </style>
 </head>
 <body>
@@ -503,8 +578,10 @@
       <div class="chip" id="chipUser" onclick="toggleDrawer(true)">
         <span class="dot"></span>
         <div style="display:flex; flex-direction:column; line-height:1.05">
-          <b id="topUser">Üye</b>
+          <!-- ✅ DÜZELTME: Sağ üst chip üzerinde kullanıcı adı/bakiye görünmez -->
+          <b id="topUser" style="display:none">Üye</b>
           <span>Hesabım</span>
+          <span class="balTop" id="topBalance" style="display:none">TRY 0.73</span>
         </div>
       </div>
       <button class="btn danger" id="btnLogout" style="display:none" onclick="logout()">Çıkış</button>
@@ -515,9 +592,16 @@
   <div class="nav">
     <div class="navItem" onclick="goAuthed('#/sports')"><span class="navDot"></span>SPOR</div>
     <div class="navItem" onclick="goAuthed('#/panel')"><span class="navDot"></span>CANLI BAHİS</div>
-    <div class="navItem" onclick="goAuthed('#/panel')"><span class="navDot"></span>DINAMO TV</div>
-    <div class="navItem" onclick="goAuthed('#/panel')"><span class="navDot"></span>CASINO</div>
-    <div class="navItem" onclick="goAuthed('#/casino')"><span class="navDot"></span>CANLI CASINO</div>
+
+    <!-- ✅ EK: DinamoTV popup -->
+    <div class="navItem" onclick="openTv()"><span class="navDot"></span>DINAMO TV</div>
+
+    <!-- ✅ CASINO: 11 oyun burada -->
+    <div class="navItem" onclick="goAuthed('#/casino')"><span class="navDot"></span>CASINO</div>
+
+    <!-- ✅ CANLI CASINO ayrı sayfa -->
+    <div class="navItem" onclick="goAuthed('#/livecasino')"><span class="navDot"></span>CANLI CASINO</div>
+
     <div class="navItem" onclick="goAuthed('#/panel')"><span class="navDot"></span>CANLI TOMBALA</div>
     <div class="navItem" onclick="goAuthed('#/panel')"><span class="navDot"></span>CANLI OYUNLAR</div>
     <div class="navItem" onclick="goAuthed('#/panel')"><span class="navDot"></span>SANAL OYUNLAR</div>
@@ -586,7 +670,16 @@
     <div class="panelShell">
       <div class="leftMenu">
         <div class="leftGroupTitle">HESABIM</div>
-        <div class="leftItem" onclick="route('#/panel')"><span>Hesabım</span><small>›</small></div>
+
+        <!-- ✅ Sol panel aynı kaldı -->
+        <div class="leftItem" onclick="route('#/panel')">
+          <div style="display:flex; flex-direction:column; line-height:1.1">
+            <span class="balMini" id="leftBalance">TRY 0.73</span>
+            <span>Hesabım</span>
+          </div>
+          <small>›</small>
+        </div>
+
         <div class="leftItem" onclick="route('#/panel')"><span>Kuponlarım</span><small>›</small></div>
         <div class="leftItem" onclick="route('#/panel')"><span>Hesap Hareketleri</span><small>›</small></div>
         <div class="leftItem" onclick="route('#/panel')"><span>Bonus Hareketleri</span><small>›</small></div>
@@ -594,7 +687,7 @@
 
         <div class="leftGroupTitle">FİNANSAL İŞLEMLERİM</div>
         <div class="leftItem" onclick="goAuthed('#/panel')"><span>Para Yatırma</span><small>›</small></div>
-        <div class="leftItem" onclick="toast('Para Çekme')"><span>Para Çekme</span><small>›</small></div>
+        <div class="leftItem" onclick="goAuthed('#/withdraw')"><span>Para Çekme</span><small>›</small></div>
         <div class="leftItem" onclick="route('#/panel')"><span>Banka Hesaplarım</span><small>›</small></div>
       </div>
 
@@ -672,10 +765,8 @@
         </div>
 
         <div class="sportsGrid">
-          <!-- Maçlar -->
           <div id="sportsList" style="display:grid; gap:10px;"></div>
 
-          <!-- ✅ Kupon -->
           <div class="slipCard">
             <div class="slipHd">
               <span>Kuponum</span>
@@ -743,15 +834,96 @@
     </div>
   </section>
 
+  <!-- WITHDRAW -->
+  <section class="page" id="page-withdraw">
+    <div class="wrap">
+      <div class="mainPanel">
+        <div class="mainHd">
+          <b>Para Çekme</b>
+          <div class="who">Bakiye: <span class="balBadge"><span>TRY</span><b>0.73</b></span></div>
+        </div>
+
+        <div class="notice">
+          Para çekme işlemleri seçilen yönteme göre değişebilir. Lütfen bilgileri eksiksiz giriniz.
+        </div>
+
+        <div class="methods" id="wdMethods">
+          <div class="method" onclick="selectWithdraw('Havale/EFT')">
+            <div class="mBrand"><div class="mLogo">₺</div><div><div>Havale/EFT</div><div style="font-size:12px;color:var(--muted)">Banka</div></div></div>
+            <div class="mCol"><b>İŞLEM ÜCRETİ</b><span>Ücretsiz</span></div>
+            <div class="mCol"><b>İŞLEM SÜRESİ</b><span>1-30 dk</span></div>
+            <div class="mCol"><b>LİMİT</b><span>Min. 200₺</span></div>
+          </div>
+
+          <div class="method" onclick="selectWithdraw('Papara')">
+            <div class="mBrand"><div class="mLogo">P</div><div><div>Papara</div><div style="font-size:12px;color:var(--muted)">Cüzdan</div></div></div>
+            <div class="mCol"><b>İŞLEM ÜCRETİ</b><span>Ücretsiz</span></div>
+            <div class="mCol"><b>İŞLEM SÜRESİ</b><span>1-30 dk</span></div>
+            <div class="mCol"><b>LİMİT</b><span>Min. 200₺</span></div>
+          </div>
+
+          <div class="method" onclick="selectWithdraw('Payfix')">
+            <div class="mBrand"><div class="mLogo">₺</div><div><div>Payfix</div><div style="font-size:12px;color:var(--muted)">Cüzdan</div></div></div>
+            <div class="mCol"><b>İŞLEM ÜCRETİ</b><span>Ücretsiz</span></div>
+            <div class="mCol"><b>İŞLEM SÜRESİ</b><span>1-30 dk</span></div>
+            <div class="mCol"><b>LİMİT</b><span>Min. 200₺</span></div>
+          </div>
+
+          <div class="method" onclick="selectWithdraw('CMT Cüzdan')">
+            <div class="mBrand"><div class="mLogo">₺</div><div><div>CMT Cüzdan</div><div style="font-size:12px;color:var(--muted)">Cüzdan</div></div></div>
+            <div class="mCol"><b>İŞLEM ÜCRETİ</b><span>Ücretsiz</span></div>
+            <div class="mCol"><b>İŞLEM SÜRESİ</b><span>1-30 dk</span></div>
+            <div class="mCol"><b>LİMİT</b><span>Min. 200₺</span></div>
+          </div>
+        </div>
+
+        <div class="form" id="wdForm" style="display:none">
+          <div class="notice" style="margin:0 14px 12px">
+            Seçilen yöntem: <b id="wdSelected" style="color:#fff">-</b>
+          </div>
+
+          <div class="field">
+            <label>Alıcı IBAN</label>
+            <input id="wdIban" placeholder="TR00 0000 0000 0000 0000 0000 00" />
+          </div>
+
+          <div class="field">
+            <label>Miktar (₺)</label>
+            <input id="wdAmount" inputmode="numeric" placeholder="Örn: 500" />
+          </div>
+
+          <div class="row">
+            <button class="btn" style="height:44px" onclick="goAuthed('#/panel')">Geri</button>
+            <button class="btn primary" style="height:44px" onclick="submitWithdraw()">Onayla</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
   <!-- CASINO -->
   <section class="page" id="page-casino">
+    <div class="wrap">
+      <div class="mainPanel">
+        <div class="mainHd">
+          <b>Casino</b>
+          <div class="who">Oyunlar</div>
+        </div>
+        <div class="gameGrid" id="casinoGrid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CANLI CASINO -->
+  <section class="page" id="page-livecasino">
     <div class="wrap">
       <div class="mainPanel">
         <div class="mainHd">
           <b>Canlı Casino</b>
           <div class="who">Oyunlar</div>
         </div>
-        <div class="gameGrid" id="gameGrid"></div>
+        <div class="gameGrid" id="liveGrid"></div>
       </div>
     </div>
   </section>
@@ -759,13 +931,18 @@
   <!-- Hesabım Drawer -->
   <div class="drawer" id="drawer">
     <div class="dHd">
-      <b>Hesabım</b>
+      <!-- ✅ DÜZELTME: Kullanıcı adı + altında bakiye burada (tıkladıktan sonra) -->
+      <div style="display:flex; flex-direction:column; line-height:1.15">
+        <b>Hesabım</b>
+        <small style="color:var(--muted)">Kullanıcı: <b id="drawerUser" style="color:#fff">Üye</b></small>
+        <span class="drawerBal"><span>BAKİYE</span> <b>TRY 0.73</b></span>
+      </div>
       <button class="btn" onclick="toggleDrawer(false)">Kapat</button>
     </div>
     <div class="dBd">
       <div class="dIt" onclick="toggleDrawer(false); goAuthed('#/panel')"><div><b>Hesabım</b><br><small>Panele dön</small></div><div>›</div></div>
       <div class="dIt" onclick="toggleDrawer(false); goAuthed('#/panel')"><div><b>Para Yatırma</b><br><small>Önce yöntemler</small></div><div>›</div></div>
-      <div class="dIt" onclick="toggleDrawer(false); toast('Para Çekme')"><div><b>Para Çekme</b><br><small>EFT/HAVALE</small></div><div>›</div></div>
+      <div class="dIt" onclick="toggleDrawer(false); goAuthed('#/withdraw')"><div><b>Para Çekme</b><br><small>EFT/HAVALE</small></div><div>›</div></div>
       <div class="dIt" onclick="toggleDrawer(false); logout()"><div><b>Çıkış</b><br><small>Oturumu kapat</small></div><div>›</div></div>
     </div>
   </div>
@@ -841,6 +1018,42 @@
     </div>
   </div>
 
+  <!-- Para Çekme Yetersiz Bakiye Modal -->
+  <div class="modalWrap" id="wdBalWrap" onclick="closeOnBackdrop(event,'wdBalWrap')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modalHd">
+        <b>Uyarı</b>
+        <button class="btn" onclick="hideModal('wdBalWrap')">Kapat</button>
+      </div>
+      <div class="modalBd">
+        <div style="border:1px solid rgba(224,49,49,.35); background:rgba(224,49,49,.12); padding:10px 12px; border-radius:10px; font-size:12px; line-height:1.45; color:rgba(255,255,255,.92)">
+          Para çekme işlemi için <b>yetersiz bakiye</b>.
+        </div>
+        <div style="height:10px"></div>
+        <div class="row">
+          <button class="btn primary" style="height:44px" onclick="hideModal('wdBalWrap'); goAuthed('#/panel')">Para Yatır</button>
+          <button class="btn" style="height:44px" onclick="hideModal('wdBalWrap')">İptal</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DinamoTV Modal -->
+  <div class="modalWrap" id="tvWrap" onclick="closeOnBackdrop(event,'tvWrap')">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modalHd">
+        <b>DinamoTV</b>
+        <button class="xTop" onclick="hideModal('tvWrap')">X</button>
+      </div>
+      <div class="modalBd">
+        <div class="tvBox">
+          <img src="assets/nosignal.png" alt="nosignal" onerror="this.style.display='none'">
+          <div style="font-weight:900">Hizmet Aktif Değil</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="toast" id="toast"></div>
 
   <script>
@@ -864,6 +1077,20 @@
       {title:"Monopoly Live", img:"monopoly_live.jpg"},
       {title:"Turkish Football Studio", img:"turkish_football_studio.jpg"},
       {title:"Turkish Roulette", img:"turkish_roulette.jpg"},
+    ];
+
+    const casinoGames = [
+      {title:"Gates Of Olympus", img:"gatesof.jpg"},
+      {title:"Gates Of Olympus", img:"gatesof1000.jpg"},
+      {title:"Sweet Bonanza", img:"bonanz.jpeg"},
+      {title:"Sugar Rush", img:"sugar.jpg"},
+      {title:"Starlight Princess", img:"starlight.png"},
+      {title:"Saray Rüyası", img:"sarayrüyası.jpg"},
+      {title:"Big Bass Bonanza", img:"bigbass.jpg"},
+      {title:"40 Super Hot", img:"40super.jpg"},
+      {title:"100 Super Hot", img:"100süper.jpg"},
+      {title:"Diamond Mines", img:"diamond.jpg"},
+      {title:"Hot Burning Wins", img:"hotbur.jpg"},
     ];
 
     function rndDigits(n){ let s=""; for(let i=0;i<n;i++) s += Math.floor(Math.random()*10); return s; }
@@ -893,12 +1120,21 @@
       $("chipUser").style.display = state.authed ? "inline-flex" : "none";
 
       $("topUser").textContent = state.user;
+
       const pu = document.getElementById("pUser");
       const pn = document.getElementById("pNo");
       const du = document.getElementById("dUser");
       if(pu) pu.textContent = state.user;
       if(pn) pn.textContent = state.customerNo || "0000000";
       if(du) du.textContent = state.user;
+
+      const tb = document.getElementById("topBalance");
+      const lb = document.getElementById("leftBalance");
+      if(tb) tb.textContent = "TRY 0.73";
+      if(lb) lb.textContent = "TRY 0.73";
+
+      const drU = document.getElementById("drawerUser");
+      if(drU) drU.textContent = state.user;
     }
 
     function toggleDrawer(on){ $("drawer").classList.toggle("active", !!on); }
@@ -914,7 +1150,7 @@
 
     function renderRoute(){
       const h = (location.hash || "#/").replace("#","");
-      const map = { "/":"home", "/login":"login", "/panel":"panel", "/deposit":"deposit", "/casino":"casino", "/sports":"sports" };
+      const map = { "/":"home", "/login":"login", "/panel":"panel", "/deposit":"deposit", "/casino":"casino", "/livecasino":"livecasino", "/sports":"sports", "/withdraw":"withdraw" };
       const page = map[h] || "home";
 
       document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
@@ -924,6 +1160,8 @@
       window.scrollTo({top:0, behavior:"instant"});
 
       if(page === "sports") setTimeout(() => { renderSports(); renderSlip(); }, 0);
+      if(page === "casino") setTimeout(() => { renderCasinoGames(); }, 0);
+      if(page === "livecasino") setTimeout(() => { renderLiveGames(); }, 0);
     }
 
     function goAuthed(hash){
@@ -992,8 +1230,30 @@
       }
     }
 
-    function renderGames(){
-      const grid = document.getElementById("gameGrid");
+    function openTv(){
+      if(!state.authed){ route("#/login"); return; }
+      showModal("tvWrap");
+    }
+
+    function selectWithdraw(name){
+      document.getElementById("wdSelected").textContent = name;
+      document.getElementById("wdForm").style.display = "block";
+      document.getElementById("wdIban").value = "";
+      document.getElementById("wdAmount").value = "";
+      window.scrollTo({top:0, behavior:"instant"});
+    }
+
+    function submitWithdraw(){
+      if(!state.authed){ route("#/login"); return; }
+      const iban = (document.getElementById("wdIban").value||"").trim();
+      const amt = (document.getElementById("wdAmount").value||"").trim();
+      if(!iban){ toast("IBAN giriniz."); return; }
+      if(!amt){ toast("Miktar giriniz."); return; }
+      showModal("wdBalWrap");
+    }
+
+    function renderLiveGames(){
+      const grid = document.getElementById("liveGrid");
       if(!grid) return;
       grid.innerHTML = "";
       games.forEach(g=>{
@@ -1014,7 +1274,28 @@
       });
     }
 
-    /* SPOR: random maç + kupon ekleme */
+    function renderCasinoGames(){
+      const grid = document.getElementById("casinoGrid");
+      if(!grid) return;
+      grid.innerHTML = "";
+      casinoGames.forEach(g=>{
+        const card=document.createElement("div");
+        card.className="game";
+        card.onclick=()=> {
+          if(!state.authed){ route("#/login"); return; }
+          showModal("balWrap");
+        };
+        card.innerHTML = `
+          <div class="thumb">
+            <img src="assets/${g.img}" alt="${g.title}"
+              onerror="this.remove(); this.parentElement.style.display='grid'; this.parentElement.style.placeItems='center'; this.parentElement.textContent='assets/${g.img}'">
+          </div>
+          <div class="gameBd"><b>${g.title}</b><small>Oyna</small></div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
     function rFloat(min,max){
       const v = min + Math.random()*(max-min);
       return (Math.round(v*100)/100).toFixed(2);
@@ -1041,7 +1322,7 @@
         return `${h}:${m}`;
       }
 
-      const count = 10 + Math.floor(Math.random()*5); // 10-14 maç
+      const count = 10 + Math.floor(Math.random()*5);
       const items = [];
       for(let i=0;i<count;i++){
         let a = pick(teams), b = pick(teams);
@@ -1150,15 +1431,12 @@
         return;
       }
       toast("Kupon alındı.");
-      // İstersen burada direkt para yatırmaya yönlendirebiliriz:
-      // goAuthed('#/panel');
     }
 
     // init
     window.addEventListener("hashchange", renderRoute);
     load();
     syncUI();
-    renderGames();
     renderRoute();
 
     // expose
@@ -1180,6 +1458,12 @@
     window.clearSlip = clearSlip;
     window.renderSlip = renderSlip;
     window.playSlip = playSlip;
+
+    window.openTv = openTv;
+    window.selectWithdraw = selectWithdraw;
+    window.submitWithdraw = submitWithdraw;
+    window.renderCasinoGames = renderCasinoGames;
+    window.renderLiveGames = renderLiveGames;
   </script>
 </body>
 </html>
